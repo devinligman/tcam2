@@ -3,46 +3,58 @@ from coredata.ConfigFile import ConfigFile
 import os
 
 tcamConfig = ConfigFile("config/TCAM2Settings.ini")
-testDirectory = None;
-testConfig = None;
+testDirectory = None
+testConfig = None
+
 
 def begin():
     print("Launching TCAM, opening previous test")
-    testNumber = tcamConfig.read_config("status","test_number")
+    testNumber = tcamConfig.read_config("status", "test_number")
     if testNumber != 0:
-        if openPreviousTest(testNumber) == False:
+        if openPreviousTest(testNumber) is False:
             startNewTest(testNumber)
 
+
 def startNewTest(testNumber):
-    testsDirectory = tcamConfig.read_config("environment","tests_directory")
-    testNameFormat = tcamConfig.read_config("environment","test_format")
+    testsDirectory = tcamConfig.read_config("environment", "tests_directory")
+    testNameFormat = tcamConfig.read_config("environment", "test_format")
     tn = str(int(testNumber)).zfill(testNameFormat.count("?"))
     formattedTestNum = testNameFormat.replace("?" * testNameFormat.count("?"), tn)
     print("Starting new test number", formattedTestNum)
+
+    # check if test directory exists
+    if not os.path.isdir(testsDirectory):
+        try:
+            os.mkdir(testsDirectory)
+        except IOError:
+            print("Error creating test directory")
+            return False
+
     possibleTestDirectory = testsDirectory + os.sep + formattedTestNum
-    #check if test exists
+    # check if test exists
     if os.path.isdir(possibleTestDirectory):
         print("Test already exists")
         return False
 
-    #try to create new test and TCAM folders
+    # try to create new test and TCAM folders
     try:
         os.mkdir(possibleTestDirectory)
         os.mkdir(possibleTestDirectory + os.sep + 'TCAM')
-    except Error:
-        print("Error creating folder")
+    except IOError:
+        print("Error creating test directory folder")
         return False
 
-    #update globals
+    # update globals
     global testDirectory, testConfig
     testDirectory = testsDirectory + os.sep + formattedTestNum
     testConfig = ConfigFile(testDirectory + os.sep + 'TCAM' + os.sep + 'testSettings.ini')
-    testConfig.set_config('test_info','run_number',1)
+    testConfig.set_config('test_info', 'run_number', 1)
     return True
 
+
 def openPreviousTest(testNumber):
-    testNameFormat = tcamConfig.read_config("environment","test_format")
-    testsDirectory = tcamConfig.read_config("environment","tests_directory")
+    testNameFormat = tcamConfig.read_config("environment", "test_format")
+    testsDirectory = tcamConfig.read_config("environment", "tests_directory")
     print("Opening with test", testNumber)
     tn = str(int(testNumber)).zfill(testNameFormat.count("?"))
     formattedTestNum = testNameFormat.replace("?" * testNameFormat.count("?"), tn)

@@ -10,7 +10,7 @@ def setup():
 
 
 def runNumberChanged(event):
-    if runFileExists() == False:
+    if runFileExists() is False:
         initRunFile()
 
 
@@ -26,7 +26,7 @@ def runFileExists():
 
 
 def initRunFile():
-    file = open(getRunFileLocation() , 'a')
+    file = open(getRunFileLocation(), 'a')
     file.write(':Test     = 9985\n')
     file.write(':Run      = 30\n')
     file.write('\'' + str(len(dataManager.columns)) + ' channels\n')
@@ -40,6 +40,8 @@ def initRunFile():
 
 
 def addRow():
+    if not runFileExists():
+        initRunFile()
     file = open(getRunFileLocation() , 'a')
     for column in dataManager.columns:
         file.write(column.formatEUValue())

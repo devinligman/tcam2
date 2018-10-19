@@ -7,7 +7,6 @@ s = None
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
-
 def begin():
     s.bind((TCP_IP, TCP_PORT))
     s.listen(1)
@@ -16,7 +15,8 @@ def begin():
     print('Connection address:', addr)
     while 1:
         data = conn.recv(BUFFER_SIZE)
-        if not data: break
+        if not data:
+            break
         print("received data:", data)
         conn.send(data)  # echo
     conn.close()

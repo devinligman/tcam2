@@ -2,15 +2,12 @@ import coredata.TestController as testController
 import coredata.DataManager as dataManager
 
 
-
 # Begin core services
 testController.begin()
 dataManager.begin()
 
 # testController.openPreviousTest(1540)
 # testController.startNewTest(1541)
-
-
 
 
 # sample module loading
@@ -20,4 +17,4 @@ eudata.addRow()
 
 
 import endpoints.DataInput as DataInput
-DataInput.begin()
+# DataInput.begin()
